@@ -19,7 +19,23 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue';
+import api from '../services/api'; // Siempre apunta al servicio central
+
+const courses = ref([]);
+
+const getCourses = async () => {
+    try {
+        const response = await api.get('/course');
+        courses.value = response.data;
+    } catch (error) {
+        console.error("Error al cargar cursos:", error);
+    }
+};
+
+onMounted(getCourses);
+
 export default {
   name: 'Course',
   data() {

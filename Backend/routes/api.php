@@ -11,3 +11,4 @@ Route::get('/user', function (Request $request) {
 
 Route::apiResource('student', StudentController::class);
 Route::apiResource('course', CourseController::class);
+

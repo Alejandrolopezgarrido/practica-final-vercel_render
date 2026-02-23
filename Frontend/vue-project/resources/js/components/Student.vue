@@ -20,7 +20,24 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue';
+import api from '../services/api'; // Esto importa tu configuración de Render
+
+const students = ref([]);
+
+const getStudents = async () => {
+    try {
+        // Ahora pide los datos a Render automáticamente
+        const response = await api.get('/student'); 
+        students.value = response.data;
+    } catch (error) {
+        console.error("Error al cargar alumnos:", error);
+    }
+};
+
+onMounted(getStudents);
+
 export default {
   name: 'Student',
   data() {
