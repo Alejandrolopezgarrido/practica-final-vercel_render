@@ -1,15 +1,26 @@
-FROM php:8.2-apache 
+FROM php:8.2-apache
+
 RUN apt-get update && apt-get install -y libpng-dev libonig-dev libxml2-dev libzip-dev zip unzip git curl
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+
 RUN a2enmod rewrite
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+
 RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 RUN sed -ri -e 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf
-RUN printf "<Directory /var/www/html/public>\n\tOptions Indexes FollowSymLinks\n\tAllowOverride All\n\tRequire all granted\n</Directory>" >> /etc/apache2/apache2.conf
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN echo "<Directory /var/www/html/public>\n\tAllowOverride All\n\tRequire all granted\n</Directory>" >> /etc/apache2/apache2.conf
+
+RUN curl -sS  | php -- --install-dir=/usr/local/bin --filename=composer
+
 COPY . /var/www/html
+
 RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-RUN composer install --no-dev --optimize-autoloader
+
+ENV APP_KEY=base64:u6899S79392Z6pY766S/YpI9pX2U56699S79392Z6pY=
+
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
 EXPOSE 80
