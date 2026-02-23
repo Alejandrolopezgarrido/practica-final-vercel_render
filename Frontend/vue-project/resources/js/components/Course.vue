@@ -6,7 +6,7 @@
 
     <ul>
       <li v-for="p in courseFiltrados" :key="p.id">
-        {{ p.name }} - {{ p.description }}€ 
+        {{ p.name }} - {{ p.description }}
         <button @click="editar(p)">Editar</button>
         <button @click="borrar(p.id)">Eliminar</button>
       </li>
@@ -14,56 +14,42 @@
 
     <h3>{{ editando ? 'Editar curso' : 'Nuevo curso' }}</h3>
     <input v-model="form.name" placeholder="Nombre">
-    <input v-model="form.description" placeholder="descripcion">
+    <input v-model="form.description" placeholder="descripción">
     <button @click="guardar">Guardar</button>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import api from '../services/api'; // Siempre apunta al servicio central
-
-const courses = ref([]);
-
-const getCourses = async () => {
-    try {
-        const response = await api.get('/course');
-        courses.value = response.data;
-    } catch (error) {
-        console.error("Error al cargar cursos:", error);
-    }
-};
-
-onMounted(getCourses);
-
+<script>
+// ELIMINADO EL "setup": Ahora Vercel no dará error por el "export default"
 export default {
   name: 'Course',
   data() {
     return {
       course: [],
-      form: { id: null, name: '', email: '', course_id: ''},
+      form: { id: null, name: '', description: ''}, // Limpiado: no necesita email ni course_id
       filtro: '',
       editando: false,
-      apiBase: 'http://localhost/api/course'
+      // URL de Render actualizada para producción
+      apiBase: 'https://backend-practica-0bwi.onrender.com/api/course'
     };
   },
   computed: {
     courseFiltrados() {
       return this.course.filter(p =>
-        p.name.toLowerCase().includes(this.filtro.toLowerCase())
+        p.name && p.name.toLowerCase().includes(this.filtro.toLowerCase())
       );
     },
   },
   methods: {
     async cargarCourse() {
       try {
-        const res = await fetch(this.apiBase,{
+        const res = await fetch(this.apiBase, {
           headers: { 'Accept': 'application/json' }
         });
         if (!res.ok) throw new Error('Error al cargar cursos');
         this.course = await res.json();
       } catch (error) {
-        console.error(error);
+        console.error("Error en cursos:", error);
       }
     },
     async guardar() {
@@ -78,9 +64,9 @@ export default {
         };
 
         const url = this.editando ? `${this.apiBase}/${this.form.id}` : this.apiBase;
-
         const res = await fetch(url, options);
-        if (!res.ok) throw new Error('Error al guardar el curso');
+        
+        if (!res.ok) throw new Error('Error al guardar');
 
         this.resetForm();
         this.cargarCourse();
@@ -93,9 +79,10 @@ export default {
       this.editando = true;
     },
     async borrar(id) {
+      if(!confirm('¿Eliminar curso?')) return;
       try {
         const res = await fetch(`${this.apiBase}/${id}`, { method: 'DELETE' });
-        if (!res.ok) throw new Error('Error al borrar el estudainte');
+        if (!res.ok) throw new Error('Error al borrar');
         this.cargarCourse();
       } catch (error) {
         console.error(error);

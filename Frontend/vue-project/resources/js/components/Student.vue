@@ -6,7 +6,7 @@
 
     <ul>
       <li v-for="p in studentFiltrados" :key="p.id">
-        {{ p.name }} - {{ p.email }} - {{ p.course_id }} € 
+        {{ p.name }} - {{ p.email }} - Curso ID: {{ p.course_id }} 
         <button @click="editar(p)">Editar</button>
         <button @click="borrar(p.id)">Eliminar</button>
       </li>
@@ -20,24 +20,8 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import api from '../services/api'; // Esto importa tu configuración de Render
-
-const students = ref([]);
-
-const getStudents = async () => {
-    try {
-        // Ahora pide los datos a Render automáticamente
-        const response = await api.get('/student'); 
-        students.value = response.data;
-    } catch (error) {
-        console.error("Error al cargar alumnos:", error);
-    }
-};
-
-onMounted(getStudents);
-
+<script>
+// Eliminamos el "setup" de la etiqueta script de arriba
 export default {
   name: 'Student',
   data() {
@@ -46,29 +30,30 @@ export default {
       form: { id: null, name: '', email: '', course_id: ''},
       filtro: '',
       editando: false,
-      apiBase: 'http://localhost/api/student'
+      // IMPORTANTE: Cambiamos localhost por tu URL de Render
+      apiBase: 'https://backend-practica-0bwi.onrender.com/api/student'
     };
   },
   computed: {
     studentFiltrados() {
       return this.student.filter(p =>
-        p.name.toLowerCase().includes(this.filtro.toLowerCase())
+        p.name && p.name.toLowerCase().includes(this.filtro.toLowerCase())
       );
     },
   },
   methods: {
     async cargarStudent() {
       try {
-        const res = await fetch(this.apiBase,{
+        const res = await fetch(this.apiBase, {
           headers: { 'Accept': 'application/json' }
         });
         if (!res.ok) throw new Error('Error al cargar estudiantes');
         this.student = await res.json();
       } catch (error) {
-        console.error(error);
+        console.error("Error al cargar alumnos:", error);
       }
     },
-async guardar() {
+    async guardar() {
       try {
         const options = {
           method: this.editando ? 'PUT' : 'POST',
@@ -80,12 +65,12 @@ async guardar() {
         };
 
         const url = this.editando ? `${this.apiBase}/${this.form.id}` : this.apiBase;
-
         const res = await fetch(url, options);
-        if (!res.ok) throw new Error('Error al guardar el curso');
+        
+        if (!res.ok) throw new Error('Error al guardar');
 
         this.resetForm();
-        this.cargarCourse();
+        this.cargarStudent(); // Corregido: antes llamabas a cargarCourse()
       } catch (error) {
         console.error(error);
       }
@@ -95,9 +80,10 @@ async guardar() {
       this.editando = true;
     },
     async borrar(id) {
+      if(!confirm('¿Estás seguro?')) return;
       try {
         const res = await fetch(`${this.apiBase}/${id}`, { method: 'DELETE' });
-        if (!res.ok) throw new Error('Error al borrar el estudiante');
+        if (!res.ok) throw new Error('Error al borrar');
         this.cargarStudent();
       } catch (error) {
         console.error(error);
