@@ -1,27 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\CourseController;
 
-// Ruta principal: Solo para saber que el servidor está encendido
+// Página de inicio confirmando que la API está viva
 Route::get('/', function () {
-    return response()->json([
-        'mensaje' => 'Servidor Backend de la Práctica funcionando',
-        'estado' => 'OK'
-    ]);
+    return response()->json(['status' => 'API conectada a Base de Datos']);
 });
 
-// Ruta de estudiantes: Devuelve datos, no una vista
-Route::get('student', function(){
-    return response()->json([
-        ['id' => 1, 'nombre' => 'Juan Pérez'],
-        ['id' => 2, 'nombre' => 'María García']
-    ]);
-});
+// Rutas conectadas a tus controladores
+Route::get('student', [StudentController::class, 'index']);
+Route::get('course', [CourseController::class, 'index']);
 
-// Ruta de cursos
-Route::get('course', function(){
-    return response()->json([
-        ['id' => 101, 'titulo' => 'Desarrollo Web'],
-        ['id' => 102, 'titulo' => 'Bases de Datos']
-    ]);
-});
+// Si quieres ver un estudiante específico (ej: /student/1)
+Route::get('student/{id}', [StudentController::class, 'show']);
+Route::get('course/{id}', [CourseController::class, 'show']);
+
+?>
