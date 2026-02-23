@@ -1,7 +1,8 @@
 <script setup>
-// Importamos tus componentes (ajusta la ruta si es necesario)
-import Student from './components/Student.vue' 
-import Course from './components/Course.vue'
+// '../' sale de la carpeta 'src'
+// luego entramos en 'resources/js/components/'
+import Student from '../resources/js/components/Student.vue'
+import Course from '../resources/js/components/Course.vue'
 </script>
 
 <template>
@@ -9,19 +10,26 @@ import Course from './components/Course.vue'
     <h1>Panel de Administración</h1>
     <hr>
     
-    <h2>Listado de Estudiantes</h2>
-    <Student /> <hr>
+    <section>
+      <h2>Listado de Estudiantes</h2>
+      <Student />
+    </section>
 
-    <h2>Listado de Cursos</h2>
-    <Course /> </div>
+    <hr>
+
+    <section>
+      <h2>Listado de Cursos</h2>
+      <Course />
+    </section>
+  </div>
 </template>
 
 <style scoped>
 .container {
   padding: 20px;
-  font-family: sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
 }
-hr {
-  margin: 30px 0;
-}
-</style>
+h1 { color: #42b883; }
+hr { margin: 30px 0; border: 0; border-top: 1px solid #eee; }
+</section>
