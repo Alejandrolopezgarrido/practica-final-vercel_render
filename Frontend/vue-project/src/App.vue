@@ -1,6 +1,5 @@
 <script setup>
-// '../' sale de la carpeta 'src'
-// luego entramos en 'resources/js/components/'
+// Asegúrate de que las mayúsculas coincidan exactamente con tus archivos
 import Student from '../resources/js/components/Student.vue'
 import Course from '../resources/js/components/Course.vue'
 </script>
@@ -32,4 +31,5 @@ import Course from '../resources/js/components/Course.vue'
 }
 h1 { color: #42b883; }
 hr { margin: 30px 0; border: 0; border-top: 1px solid #eee; }
-</section> 
+/* Aquí estaba el error, debe ser /style */
+</style>
