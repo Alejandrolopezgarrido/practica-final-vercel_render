@@ -23,4 +23,6 @@ ENV APP_KEY=base64:u6899S79392Z6pY766S/YpI9pX2U56699S79392Z6pY=
 
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
+CMD php artisan migrate --force && apache2-foreground
+
 EXPOSE 80
