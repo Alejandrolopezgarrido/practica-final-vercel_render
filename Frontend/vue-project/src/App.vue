@@ -32,4 +32,4 @@ import Course from '../resources/js/components/Course.vue'
 }
 h1 { color: #42b883; }
 hr { margin: 30px 0; border: 0; border-top: 1px solid #eee; }
-</section>
+</section> 
