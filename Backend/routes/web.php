@@ -17,4 +17,6 @@ Route::get('course', [CourseController::class, 'index']);
 Route::get('student/{id}', [StudentController::class, 'show']);
 Route::get('course/{id}', [CourseController::class, 'show']);
 
+Route::post('student', [StudentController::class, 'store']);
+Route::post('course', [CourseController::class, 'store']);
 ?>
