@@ -42,6 +42,59 @@ La aplicación se apoya en tres pilares fundamentales para garantizar su funcion
 > **Nota Importante:** Debido al uso de la capa gratuita de **Render**, el servidor entra en reposo tras periodos de inactividad. La primera carga de datos puede demorar unos **50 segundos** mientras la instancia se reactiva.
 
 
-## Imágenes del proceso 
+## Contenido Dockerfile
+```
+FROM php:8.2-apache
+
+RUN apt-get update && apt-get install -y libpng-dev libonig-dev libxml2-dev libzip-dev zip unzip git curl
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+
+RUN a2enmod rewrite
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+
+RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+RUN sed -ri -e 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf
+
+RUN echo "<Directory /var/www/html/public>\n\tAllowOverride All\n\tRequire all granted\n</Directory>" >> /etc/apache2/apache2.conf
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+COPY . /var/www/html
+
+RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+ENV APP_KEY=base64:u6899S79392Z6pY766S/YpI9pX2U56699S79392Z6pY=
+
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
+CMD php artisan migrate --force && apache2-foreground
+
+EXPOSE 80
+```
+
+
+## Imágenes del proceso
+### Base de datos
+![base_de_datos](images/base_datos_funcionando.png)
+
+### El Deploy de render funcionando
+![deploy_render](images/deploy_render_funcionando.png)
+
+### Comporbar que render funciona antes de enganchar vercel
+![vender_antes_vercel](images/vista_render_funcionando_antes_de_vercel.png)
+
+### Añadimos los middleware
+![middleware](images/anadimos_los_middlewear.png)
+
+### Vista vercel funcionando
+![vercel](images/vista_vercel.png)
+
+### Aplicacion Funcionando
+![app_funcionando](images/vista_final_aplicacion_funcionando.png)
+
+### El gitHub actions funcionando correctamente
+![github_actions](images/github_actions.png)
 ---
-**Desarrollado por:** Alejandro López Garrido
+**Desarrollado por:** Alejandro López Garrido 2º DAW
